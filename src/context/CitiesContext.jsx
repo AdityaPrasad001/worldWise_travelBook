@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useReducer } from "react";
 
 const CitiesContext = createContext();
 
-const initialState = { cities };
+const initialState = { cities: [] };
 
 function reducer(state, action) {
   switch (action.type) {
@@ -17,23 +17,23 @@ function reducer(state, action) {
 }
 
 function CitiesProvider({ children }) {
-  const [{ cities }, dispatch] = useReducer({ reducer, initialState });
+  const [{ cities }, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
-    async function getCities() {
+    async function fetchCities() {
       try {
         const res = await fetch("http://localhost:9000/cities");
         const data = await res.json();
-        // console.log(data);
         dispatch({ type: "cities/loaded", payload: data });
       } catch (error) {
         console.error(error.message);
       }
     }
-    getCities();
+    fetchCities();
   }, []);
+
   return (
-    <CitiesContext.Provider value={{ cities, getCities }}>
+    <CitiesContext.Provider value={{ cities }}>
       {children}
     </CitiesContext.Provider>
   );
